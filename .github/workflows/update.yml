@@ -1,0 +1,29 @@
+name: Auto News Publisher
+
+on:
+  schedule:
+    - cron: '0 * * * *' # كل ساعة
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - run: pip install requests google-generativeai
+
+    - env: 
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      run: python trend.py
+
+    - run: |
+        git config --global user.name "News Bot"
+        git config --global user.email "bot@news.com"
+        git add index.html
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update" && git push)
