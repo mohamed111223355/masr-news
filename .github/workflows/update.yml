@@ -2,7 +2,7 @@ name: ناشر الأخبار الذكي
 
 on:
   schedule:
-    - cron: '0 * * * *' # يشتغل كل ساعة
+    - cron: '0 * * * *' # كل ساعة
   workflow_dispatch: # زرار تشغيل يدوي
 
 permissions:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Run AI News Generator
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # <-- ده السطر السحري اللي كان ناقص
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # <--- ده السطر اللي كان ناقص
         run: python trend.py
 
       - name: Deploy to GitHub Pages
