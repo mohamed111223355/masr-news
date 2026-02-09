@@ -1,29 +1,39 @@
-name: Auto News Publisher
+name: ناشر الأخبار الذكي
 
 on:
   schedule:
-    - cron: '0 * * * *' # كل ساعة
-  workflow_dispatch:
+    - cron: '0 * * * *' # يشتغل كل ساعة
+  workflow_dispatch: # زرار تشغيل يدوي
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
 
-    - run: pip install requests google-generativeai
+      - name: Install libraries
+        run: |
+          pip install requests google-generativeai
 
-    - env: 
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      run: python trend.py
+      - name: Run AI News Generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} # <-- ده السطر السحري اللي كان ناقص
+        run: python trend.py
 
-    - run: |
-        git config --global user.name "News Bot"
-        git config --global user.email "bot@news.com"
-        git add index.html
-        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto Update" && git push)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          keep_files: true
