@@ -1,38 +1,7 @@
-name: ناشر الأخبار الذكي
-
-on:
-  schedule:
-    - cron: '0 */4 * * *' # كل 4 ساعات
-  workflow_dispatch: # زرار التشغيل اليدوي
-
-permissions:
-  contents: write
-
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install libraries
-        run: |
-          pip install requests google-generativeai
-
-      - name: Run AI News Generator
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python trend.py
-
-      - name: Commit and Push changes
+- name: Commit and Push changes
         run: |
           git config --global user.name 'News Bot'
           git config --global user.email 'bot@noreply.github.com'
           git add index.html
-          git commit -m "🔥 تحديث أخبار جديد + تصميم أسود" || echo "No changes to commit"
+          git commit -m "New News Update" || echo "No changes"
           git push
